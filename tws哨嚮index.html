@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TWS的哨嚮世界</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body, html { 
+            height: 100%; 
+            font-family: "PingFang TC", "Microsoft JhengHei", sans-serif; 
+            background-color: #030816; 
+            color: #e0f2fe; 
+            overflow: hidden; 
+        }
+
+        .terminal-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background-size: 100% 3px;
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .container {
+            display: flex; flex-direction: column; justify-content: space-between;
+            align-items: center; max-width: 480px; margin: 0 auto; height: 100%;
+            padding: 50px 20px 25px; position: relative;
+        }
+
+        .header { text-align: center; margin-top: 8vh; }
+        .main-title {
+            font-size: 32px; font-weight: bold; letter-spacing: 5px;
+            color: #00f0ff;
+            text-shadow: 0 0 12px rgba(0, 240, 255, 0.6);
+            margin-bottom: 8px;
+        }
+        .sub-title {
+            font-size: 12px; color: #5a7b8c; letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .login-section {
+            display: flex; flex-direction: column; align-items: center;
+            width: 100%; flex-grow: 1; justify-content: center;
+        }
+        
+        .input-group {
+            width: 80%; max-width: 280px; margin-bottom: 30px;
+            display: flex; flex-direction: column; gap: 15px;
+        }
+        
+        .name-input {
+            width: 100%; background: rgba(0, 240, 255, 0.03);
+            border: 1px solid #004a60; border-radius: 2px;
+            padding: 14px; color: #00f0ff; font-size: 15px;
+            text-align: center; outline: none; transition: all 0.3s ease;
+            letter-spacing: 2px;
+        }
+        .name-input:focus { 
+            border-color: #00f0ff; 
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.3); 
+            background: rgba(0, 240, 255, 0.08); 
+        }
+        .name-input::placeholder { color: #2a5a6b; font-size: 13px; letter-spacing: 2px; }
+
+        .connect-btn {
+            background: transparent; border: 1px solid #00f0ff;
+            color: #00f0ff; padding: 12px 40px; font-size: 14px;
+            letter-spacing: 4px; cursor: pointer; border-radius: 2px;
+            transition: all 0.3s ease; text-transform: uppercase;
+        }
+        .connect-btn:hover, .connect-btn:active {
+            background: #00f0ff; color: #030816;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+        }
+
+        .sys-msg {
+            margin-top: 25px; font-size: 12px; color: #00f0ff;
+            height: 20px; opacity: 0; transition: opacity 0.4s; letter-spacing: 1.5px;
+        }
+
+        .footer {
+            text-align: center; font-size: 11px; color: #3b5f6e;
+            line-height: 1.8; letter-spacing: 1.5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="terminal-bg"></div>
+    
+    <div class="container">
+        <div class="header">
+            <div class="main-title">TWS的哨嚮世界</div>
+            <div class="sub-title">Terminal & Guide System</div>
+        </div>
+
+        <div class="login-section">
+            <div class="input-group">
+                <input type="text" id="userFullName" class="name-input" placeholder="登錄全名 (例: 姜小夏)" autocomplete="off">
+                <input type="text" id="userNickname" class="name-input" placeholder="登錄稱呼 (例: 小夏)" autocomplete="off">
+            </div>
+            <button class="connect-btn" onclick="startConnection()">建立連結</button>
+            <div id="sysMsg" class="sys-msg"></div>
+        </div>
+
+        <div class="footer">
+            小說版權所屬_myyouth__<br>
+            故事純屬虛構 無不良引導
+        </div>
+    </div>
+
+    <script>
+        function startConnection() {
+            const fullName = document.getElementById('userFullName').value.trim();
+            const nickname = document.getElementById('userNickname').value.trim();
+            const msgEl = document.getElementById('sysMsg');
+            const btn = document.querySelector('.connect-btn');
+            
+            // 檢查兩個欄位是否都填了
+            if (!fullName || !nickname) {
+                msgEl.textContent = "系統警告：識別資訊不完整";
+                msgEl.style.opacity = 1;
+                msgEl.style.color = "#ff4a4a";
+                setTimeout(() => { msgEl.style.opacity = 0; }, 2000);
+                return;
+            }
+
+            msgEl.style.color = "#00f0ff";
+            msgEl.style.opacity = 1;
+            btn.style.pointerEvents = 'none';
+            btn.style.opacity = '0.5';
+            
+            let dots = 0;
+            // 讀取進度條動畫
+            const interval = setInterval(() => {
+                dots = (dots + 1) % 4;
+                msgEl.textContent = `身分確認：${fullName}，正在建立精神圖景${'.'.repeat(dots)}`;
+            }, 400);
+
+            setTimeout(() => {
+                clearInterval(interval);
+                msgEl.textContent = "精神連結成功，準備潛入...";
+                
+                // 分別存入你要求的兩個代號對應的資料
+                localStorage.setItem('tws_USER', fullName);
+                localStorage.setItem('tws_player_name', nickname);
+                
+                // 下一步就是跳轉到故事頁面，例如：
+                // setTimeout(() => { window.location.href = 'story.html'; }, 1000);
+            }, 2500);
+        }
+    </script>
+</body>
+</html>
